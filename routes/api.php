@@ -17,15 +17,35 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 
 Route::get('/run-migrate', function () {
     try {
+        $dbPath = config('database.connections.sqlite.database');
+        $exists = file_exists($dbPath);
+        $writable = is_writable($exists ? $dbPath : dirname($dbPath));
+        
+        // Chạy migration
         \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        $migrationOutput = \Illuminate\Support\Facades\Artisan::output();
+        
+        // Lấy danh sách bảng hiện có
+        $tables = [];
+        if ($exists) {
+            $tables = array_map(function ($table) {
+                return current((array)$table);
+            }, \Illuminate\Support\Facades\DB::select("SELECT name FROM sqlite_master WHERE type='table'"));
+        }
+        
         return response()->json([
             'status' => 'success',
-            'output' => \Illuminate\Support\Facades\Artisan::output()
+            'database_path' => $dbPath,
+            'file_exists' => $exists,
+            'is_writable' => $writable,
+            'migration_output' => trim($migrationOutput),
+            'existing_tables' => $tables,
         ]);
     } catch (\Exception $e) {
         return response()->json([
             'status' => 'error',
-            'message' => $e->getMessage()
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
         ]);
     }
 });
