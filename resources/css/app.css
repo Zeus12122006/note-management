@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --bg-light: #ffffff;
+    --bg-dark: #000000;
+    --text-light: #1e293b;
+    --text-dark: #ffffff;
+}
+
+* {
+    transition: background-color 0.2s ease;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.dark {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 10px;
+}
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+
+/* Fix lỗi nhảy layout */
+input, textarea {
+    font-family: inherit;
+}
